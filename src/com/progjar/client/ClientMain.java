@@ -39,7 +39,7 @@ public class ClientMain {
             ous.writeObject(message);
             ous.flush();
 
-            System.out.println("type command:");
+            System.out.println("type command: (type /help for info)");
             String input = reader.readLine();
 
             while(!input.equals("/close")) {
@@ -50,6 +50,30 @@ public class ClientMain {
 
                 if (!Arrays.stream(commands).anyMatch(words[0]::equals)) {
                     System.out.println("command not valid!");
+                    System.out.println("type command: ");
+                    input = reader.readLine();
+                    continue;
+                }
+
+                if (words[0].equals("/help")) {
+                    System.out.println("\t\t\tUSER COMMANDS");
+                    System.out.println("/send");
+                    System.out.println("\tdescription\t: send message to spesific user");
+                    System.out.println("\tformat\t\t: /send {username} {messaage}");
+                    System.out.println("\texample\t\t: /send bob Hello bob!");
+                    System.out.println();
+                    System.out.println("/bc");
+                    System.out.println("\tdescription\t: send message to all online users");
+                    System.out.println("\tformat\t\t: /bc {message}");
+                    System.out.println("\texample\t\t: /bc Hai all!");
+                    System.out.println();
+                    System.out.println("/close");
+                    System.out.println("\tdescription\t: close connection to the server");
+                    System.out.println();
+                    System.out.println("/help");
+                    System.out.println("\tdescription\t: see manual for commands");
+                    System.out.println();
+
                     System.out.println("type command: ");
                     input = reader.readLine();
                     continue;
