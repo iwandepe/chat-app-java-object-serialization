@@ -14,14 +14,16 @@ public class ServerWorker extends Thread {
     private ObjectInputStream ois;
     private ServerThread serverThread;
     private Boolean exit;
+    private String clientId;
 
-    public ServerWorker(Socket socket, ServerThread serverThread) {
+    public ServerWorker(Socket socket, ServerThread serverThread, String clientId) {
         try {
             this.socket = socket;
             this.ous = new ObjectOutputStream(this.socket.getOutputStream());
             this.ois = new ObjectInputStream(this.socket.getInputStream());
             this.serverThread = serverThread;
             this.exit = false;
+            this.clientId = clientId;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,6 +34,8 @@ public class ServerWorker extends Thread {
             try {
                 Message message = (Message) this.ois.readObject();
 
+
+                System.out.println( message.getText() );
                 if (message.getReceiver().equals("system")) {
                     if (message.getText().equals("login")) {
                         String clientId = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
@@ -39,9 +43,15 @@ public class ServerWorker extends Thread {
 
                         System.out.println( getCurrentActiveUser() );
                     }
-                    else if (message.getText().equals("close")) {
-                        currentThread().interrupt();
+                    else if (message.getText().startsWith("close") || message.getText().isEmpty()) {
+                        System.out.println( "masuk close" );
                         exit = true;
+                        String removedClientUser = serverThread.clientUserList.remove(message.getSender());
+                        ServerWorker removedClient = serverThread.clientList.remove(clientId);
+                        System.out.println( removedClientUser );
+                        System.out.println( removedClient );
+                        break;
+//                        currentThread().interrupt();
                     }
                 }
                 else if (message.getReceiver().equals("all")) {

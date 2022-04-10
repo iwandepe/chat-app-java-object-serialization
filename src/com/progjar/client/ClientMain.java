@@ -18,7 +18,7 @@ public class ClientMain {
             Socket socket = new Socket("127.0.0.1", 9000);
 
             ObjectOutputStream ous = new ObjectOutputStream(socket.getOutputStream());
-            ClientWorker wt = new ClientWorker(new ObjectInputStream(socket.getInputStream()));
+            ClientWorker wt = new ClientWorker(new ObjectInputStream(socket.getInputStream()), socket);
             wt.start();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -42,7 +42,7 @@ public class ClientMain {
             System.out.println("type command: (type /help for info)");
             String input = reader.readLine();
 
-            while(!input.equals("/close")) {
+            while(true) {
                 message = new Message();
                 message.setSender(username);
 
@@ -98,28 +98,30 @@ public class ClientMain {
                     message.setText("<active>");
                 }
 
+                if  (words[0].equals("/close")) {
+                    wt.interrupt();
+                    message.setReceiver( "system" );
+                    message.setText("close");
+                    ous.writeObject(message);
+                    ous.flush();
+                    break;
+                }
+
                 ous.writeObject(message);
                 ous.flush();
 
                 input = reader.readLine();
             }
 
-
-            wt.interrupt();
-
-            message.setReceiver("system");
-            message.setText("close");
-
-            ous.writeObject(message);
-            ous.flush();
-
             ous.close();
             socket.close();
 
             System.out.println("my socket is closed");
-
+            return;
         } catch (IOException ex) {
             Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println("my program is done");
+        return;
     }
 }

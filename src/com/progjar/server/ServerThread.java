@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class ServerThread extends Thread {
-    private Hashtable<String, ServerWorker> clientList;
+    public Hashtable<String, ServerWorker> clientList;
     public Hashtable<String, String> clientUserList;
     private ServerSocket server;
 
@@ -30,14 +30,14 @@ public class ServerThread extends Thread {
                 // accept a new connection
                 Socket socket = this.server.accept();
 
+                // store the new thread to the hash table
+                String clientId = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
+
                 // create a new WorkerThread
-                ServerWorker wt = new ServerWorker(socket, this);
+                ServerWorker wt = new ServerWorker(socket, this, clientId);
 
                 // start the new thread
                 wt.start();
-
-                // store the new thread to the hash table
-                String clientId = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
 
                 System.out.println();
                 System.out.println("(NEW) connection from " + clientId);

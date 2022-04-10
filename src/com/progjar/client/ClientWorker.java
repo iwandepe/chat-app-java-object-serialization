@@ -5,24 +5,27 @@ import com.progjar.object.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientWorker extends Thread {
     private ObjectInputStream ois;
     ArrayList<Message> messages;
+    private Socket workerSocket;
 
-    public ClientWorker(ObjectInputStream ois) {
+    public ClientWorker(ObjectInputStream ois, Socket workerSocket) {
         this.ois = ois;
         messages = new ArrayList<Message>();
+        this.workerSocket = workerSocket;
     }
 
     public void run() {
-        while(true) {
+        while(!workerSocket.isClosed()) {
             try {
                 Message message = (Message) ois.readObject();
                 messages.add(message);
 
-                Helper.clearConsole();
+//                Helper.clearConsole();
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
 
