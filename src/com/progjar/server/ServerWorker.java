@@ -37,15 +37,7 @@ public class ServerWorker extends Thread {
                         String clientId = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
                         serverThread.clientUserList.put(message.getSender(), clientId);
 
-                        System.out.println("active users:");
-                        Enumeration<String> clientKeys = this.serverThread.clientUserList.keys();
-                        while (clientKeys.hasMoreElements()) {
-                            String username = clientKeys.nextElement();
-
-                            String client = this.serverThread.clientUserList.get(username);
-
-                            System.out.println(username + ": " + client);
-                        }
+                        System.out.println( getCurrentActiveUser() );
                     }
                     else if (message.getText().equals("close")) {
                         currentThread().interrupt();
@@ -54,6 +46,10 @@ public class ServerWorker extends Thread {
                 }
                 else if (message.getReceiver().equals("all")) {
                     this.serverThread.sendToAll(message);
+                }
+                else if (message.getText().equals("<active>")) {
+                    message.setText( getCurrentActiveUser() );
+                    this.serverThread.sendToUser(message);
                 }
                 else {
                     this.serverThread.sendToUser(message);
@@ -66,6 +62,17 @@ public class ServerWorker extends Thread {
 //                e.printStackTrace();
             }
         }
+    }
+
+    public String getCurrentActiveUser() {
+        StringBuilder activeUser = new StringBuilder("\nactive users:\n");
+        Enumeration<String> clientKeys = this.serverThread.clientUserList.keys();
+        while (clientKeys.hasMoreElements()) {
+            String username = clientKeys.nextElement();
+            String client = this.serverThread.clientUserList.get(username);
+            activeUser.append(username).append(": ").append(client).append("\n");
+        }
+        return activeUser.toString();
     }
 
     public void send(Message message) {

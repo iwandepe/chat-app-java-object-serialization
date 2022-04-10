@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class ClientMain {
     public static void main(String args[]) {
         final String[] users = {"alice", "bob", "celine"};
-        final String[] commands = {"/send", "/bc", "/close", "/help"};
+        final String[] commands = {"/send", "/bc", "/close", "/help", "/active"};
 
         try {
             Socket socket = new Socket("127.0.0.1", 9000);
@@ -93,6 +93,11 @@ public class ClientMain {
                     message.setText(input.substring(words[0].length() + 1));
                 }
 
+                if (words[0].equals("/active")) {
+                    message.setReceiver(username);
+                    message.setText("<active>");
+                }
+
                 ous.writeObject(message);
                 ous.flush();
 
@@ -110,6 +115,8 @@ public class ClientMain {
 
             ous.close();
             socket.close();
+
+            System.out.println("my socket is closed");
 
         } catch (IOException ex) {
             Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);
