@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class ClientMain {
     public static void main(String args[]) {
-        final String[] users = {"alice", "bob", "celine"};
+        final String[] users = {"alice", "bob", "celine", "eren", "levi", "erwin", "zeke", "mikasa"};
         final String[] commands = {"/send", "/bc", "/close", "/help", "/active"};
 
         try {
@@ -66,6 +66,9 @@ public class ClientMain {
                     System.out.println("\tdescription\t: send message to all online users");
                     System.out.println("\tformat\t\t: /bc {message}");
                     System.out.println("\texample\t\t: /bc Hai all!");
+                    System.out.println();
+                    System.out.println("/active");
+                    System.out.println("\tdescription\t: get all of active users");
                     System.out.println();
                     System.out.println("/close");
                     System.out.println("\tdescription\t: close connection to the server");
